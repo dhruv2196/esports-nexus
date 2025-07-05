@@ -19,14 +19,14 @@ TOPICS=(
     "bgmi"
     "pubg"
     "websocket"
-    "jwt-authentication"
+    "jwt-auth"
     "full-stack"
     "java"
     "rest-api"
     "gaming-platform"
     "esports-platform"
     "tournament-platform"
-    "player-statistics"
+    "player-stats"
 )
 
 echo "The following topics will be added to your repository:"
