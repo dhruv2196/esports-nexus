@@ -1,289 +1,236 @@
-# Esports Nexus
+# 🎮 Esports Nexus
 
-A visually stunning, feature-rich Esports gaming platform where gamers can track their gameplay, watch live matches, participate in tournaments, fetch statistics and insights, interact with other players, and recruit teammates.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.1.5-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![React](https://img.shields.io/badge/React-18.2.0-blue.svg)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0.2-blue.svg)](https://www.typescriptlang.org/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green.svg)](https://www.mongodb.com/)
 
-## Features
+A visually stunning, feature-rich esports gaming platform where gamers can track their gameplay, watch live matches, participate in tournaments, fetch statistics and insights, interact with other players, and recruit teammates.
 
-- **User Authentication**: Sign up/login with email or social accounts (Google, Discord)
-- **Gameplay Tracking**: Connect BGMI account to fetch match history, stats, and highlights
-- **Live Matches**: Watch live BGMI matches with integrated chat
-- **Tournaments**: Browse, join, and create tournaments with real-time updates
-- **Statistics & Insights**: Deep analytics with visual dashboards
-- **Social & Community**: Forums, messaging, and team recruitment
-- **Stunning UI**: Neon-themed dark UI with glassmorphism effects
+**Created by**: [Dhruv Singhal](https://github.com/dhruv2196)  
+**Repository**: [https://github.com/dhruv2196/esports-nexus](https://github.com/dhruv2196/esports-nexus)
 
-## Tech Stack
+## 🌟 Key Features
 
-### Backend
-- Java with Spring Boot
-- MongoDB for database
-- JWT for authentication
-- WebSocket for real-time features
-- OAuth2 for social login
+### 🎯 BGMI/PUBG Integration
+- **Player Search**: Search for PUBG PC players across different regions
+- **Statistics Tracking**: View detailed player statistics and match history
+- **Malformed JSON Fix**: Robust error handling for PUBG API response issues
+- **Caching**: Efficient caching mechanism to reduce API calls
 
-### Frontend
-- React with TypeScript
-- React Router for navigation
-- Framer Motion for animations
-- Axios for API calls
-- React Icons for icons
-- React Hot Toast for notifications
+### 🔐 Authentication & Security
+- JWT-based authentication system
+- Social login support (Google, Discord)
+- Secure password hashing with BCrypt
+- Role-based access control
 
-## Prerequisites
+### 🏆 Tournament Management
+- Create and manage tournaments
+- Real-time tournament updates via WebSocket
+- Player registration and bracket management
+- Prize pool tracking
 
-### For Local Development
-- Java 17 or higher
-- Maven 3.6+
-- Node.js 16+
-- MongoDB 4.4+
+### 💻 Modern Tech Stack
+- **Backend**: Spring Boot 3.1.5, MongoDB, WebSocket
+- **Frontend**: React 18, TypeScript, Framer Motion
+- **DevOps**: Docker, Kubernetes, GitHub Actions
+- **UI/UX**: Glassmorphism effects, Neon-themed dark UI
 
-### For Docker Deployment
-- Docker 20.10+
-- Docker Compose 2.0+
+## 🚀 Quick Start
 
-## Setup Instructions
-
-### Docker Deployment (Recommended)
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/esports-nexus.git
-   cd esports-nexus
-   ```
-
-2. Copy the environment file and configure it:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-3. Deploy using the deployment script:
-   ```bash
-   # For development
-   ./deploy.sh development up
-
-   # For production
-   ./deploy.sh production up
-   ```
-
-4. Check the health of services:
-   ```bash
-   ./health-check.sh
-   ```
-
-5. Access the application:
-   - Development: http://localhost
-   - Production: https://localhost (requires SSL certificates)
-
-### Docker Commands
+### Using Docker (Recommended)
 
 ```bash
-# Start services
-./deploy.sh [development|production] up
+# Clone the repository
+git clone https://github.com/dhruv2196/esports-nexus.git
+cd esports-nexus
 
-# Stop services
-./deploy.sh [development|production] down
+# Copy and configure environment variables
+cp .env.example .env
+# Edit .env with your configuration
 
-# Restart services
-./deploy.sh [development|production] restart
+# Start all services
+./deploy.sh development up
 
-# View logs
-./deploy.sh [development|production] logs
-
-# Rebuild containers
-./deploy.sh [development|production] build
+# Check service health
+./health-check.sh
 ```
+
+Access the application at: http://localhost
 
 ### Manual Setup
 
-### Backend Setup
+<details>
+<summary>Click to expand manual setup instructions</summary>
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+#### Backend Setup
+```bash
+cd backend
+mvn clean install
+mvn spring-boot:run
+```
 
-2. Configure MongoDB connection in `src/main/resources/application.properties`:
-   ```properties
-   spring.data.mongodb.uri=mongodb://localhost:27017/esports_nexus
-   ```
+#### Frontend Setup
+```bash
+cd frontend
+npm install
+npm start
+```
 
-3. Set up OAuth2 credentials (optional):
-   - Create apps on Google and Discord developer consoles
-   - Add client IDs and secrets as environment variables:
-     ```bash
-     export GOOGLE_CLIENT_ID=your_google_client_id
-     export GOOGLE_CLIENT_SECRET=your_google_client_secret
-     export DISCORD_CLIENT_ID=your_discord_client_id
-     export DISCORD_CLIENT_SECRET=your_discord_client_secret
-     ```
+</details>
 
-4. Build and run the backend:
-   ```bash
-   mvn clean install
-   mvn spring-boot:run
-   ```
-
-   The backend will start on `http://localhost:8080`
-
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Create a `.env` file (optional):
-   ```env
-   REACT_APP_API_URL=http://localhost:8080/api
-   ```
-
-4. Start the development server:
-   ```bash
-   npm start
-   ```
-
-   The frontend will start on `http://localhost:3000`
-
-## Running the Application
-
-1. Make sure MongoDB is running on your system
-2. Start the backend server (port 8080)
-3. Start the frontend development server (port 3000)
-4. Open `http://localhost:3000` in your browser
-
-## Default Credentials
-
-For testing, you can create a new account through the registration page or use the API directly.
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/signup` - Register new user
-- `POST /api/auth/signin` - Login user
-- `GET /api/auth/validate` - Validate JWT token
-
-### Tournaments
-- `GET /api/tournaments` - Get all tournaments
-- `GET /api/tournaments/{id}` - Get tournament by ID
-- `POST /api/tournaments` - Create tournament (authenticated)
-- `PUT /api/tournaments/{id}` - Update tournament (authenticated)
-- `POST /api/tournaments/{id}/register` - Register for tournament (authenticated)
-
-## Project Structure
+## 🏗️ Architecture
 
 ```
 esports-nexus/
-├── backend/                 # Java Spring Boot backend
+├── backend/                 # Spring Boot REST API
 │   ├── src/
-│   │   ├── main/
-│   │   │   ├── java/
-│   │   │   │   └── com/esportsnexus/
-│   │   │   │       ├── config/      # Configuration classes
-│   │   │   │       ├── controller/  # REST controllers
-│   │   │   │       ├── model/       # Domain models
-│   │   │   │       ├── repository/  # MongoDB repositories
-│   │   │   │       ├── service/     # Business logic
-│   │   │   │       ├── security/    # Security configuration
-│   │   │   │       └── dto/         # Data transfer objects
-│   │   │   └── resources/
-│   │   │       └── application.properties
-│   └── pom.xml
-├── frontend/                # React TypeScript frontend
+│   │   └── main/
+│   │       └── java/com/esportsnexus/
+│   │           ├── config/      # Security, WebSocket, Cache configs
+│   │           ├── controller/  # REST endpoints
+│   │           ├── service/     # Business logic & PUBG API integration
+│   │           └── model/       # MongoDB entities
+│   └── Dockerfile
+├── frontend/                # React TypeScript SPA
 │   ├── src/
-│   │   ├── components/      # Reusable components
-│   │   ├── contexts/        # React contexts
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API services
-│   │   ├── types/          # TypeScript types
-│   │   └── App.tsx         # Main app component
-│   └── package.json
-└── README.md
+│   │   ├── components/      # Reusable UI components
+│   │   ├── pages/          # Route pages
+│   │   ├── services/       # API client services
+│   │   └── contexts/       # React contexts (Auth)
+│   └── Dockerfile
+├── k8s/                    # Kubernetes manifests
+├── docker-compose.yml      # Development environment
+└── docker-compose.prod.yml # Production environment
 ```
 
-## Kubernetes Deployment
-
-For production deployment on Kubernetes:
-
-1. Update the image names in k8s manifests:
-   ```bash
-   cd k8s
-   # Update image tags in backend.yaml and frontend.yaml
-   ```
-
-2. Create namespace and secrets:
-   ```bash
-   kubectl apply -f namespace.yaml
-   # Update secrets in mongodb.yaml and backend.yaml with your base64 encoded values
-   ```
-
-3. Deploy all services:
-   ```bash
-   kubectl apply -f mongodb.yaml
-   kubectl apply -f backend.yaml
-   kubectl apply -f frontend.yaml
-   kubectl apply -f ingress.yaml
-   ```
-
-4. Check deployment status:
-   ```bash
-   kubectl get all -n esports-nexus
-   ```
-
-## Production Considerations
-
-### SSL Certificates
-- For production, obtain SSL certificates and place them in the `ssl` directory
-- Update nginx configuration with your domain name
+## 🔧 Configuration
 
 ### Environment Variables
-- Never commit `.env` file with real credentials
-- Use secrets management tools in production (AWS Secrets Manager, HashiCorp Vault, etc.)
 
-### Scaling
-- Backend and frontend are configured to run multiple replicas
-- MongoDB should be configured as a replica set for production
-- Consider using managed services (AWS RDS, MongoDB Atlas) for databases
+Create a `.env` file in the root directory:
 
-### Monitoring
-- Implement monitoring with Prometheus and Grafana
-- Set up log aggregation with ELK stack or similar
-- Configure alerts for critical services
+```env
+# MongoDB
+MONGO_INITDB_ROOT_USERNAME=admin
+MONGO_INITDB_ROOT_PASSWORD=your_secure_password
+MONGO_DATABASE=esports_nexus
 
-## CI/CD Pipeline
+# JWT
+JWT_SECRET=your_jwt_secret_key
 
-The project includes GitHub Actions workflow for:
-- Running tests on pull requests
-- Building and pushing Docker images
-- Deploying to staging/production environments
+# PUBG API (Optional)
+PUBG_API_KEY=your_pubg_api_key
 
-To use the CI/CD pipeline:
-1. Set up Docker Hub account
-2. Add secrets to GitHub repository:
+# OAuth2 (Optional)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+### PUBG API Integration
+
+The platform includes a robust PUBG API integration with special handling for malformed JSON responses:
+
+```java
+// Automatic fix for malformed JSON from PUBG API
+private String fixMalformedJson(String json) {
+    // Handles missing commas in JSON responses
+    // Prevents parsing errors and application crashes
+}
+```
+
+## 📦 Deployment
+
+### GitHub Actions CI/CD
+
+The repository includes a complete CI/CD pipeline. To enable:
+
+1. Go to Settings → Secrets → Actions
+2. Add the following secrets:
    - `DOCKER_USERNAME`
    - `DOCKER_PASSWORD`
-3. Configure deployment scripts in `.github/workflows/deploy.yml`
+   - `KUBE_CONFIG` (optional, for K8s deployment)
 
-## Future Enhancements
+See [GITHUB_ACTIONS_SETUP.md](GITHUB_ACTIONS_SETUP.md) for detailed instructions.
 
-- Support for more games (Valorant, CODM, etc.)
-- In-app streaming capabilities
-- Advanced AI-based team matching
-- Esports news and content hub
-- Mobile application
-- Real-time notifications
-- Advanced tournament brackets
-- Payment integration for prize pools
+### Kubernetes Deployment
 
-## Contributing
+```bash
+# Deploy to Kubernetes
+kubectl apply -f k8s/
 
-Feel free to submit issues and enhancement requests!
+# Check deployment status
+kubectl get all -n esports-nexus
+```
 
-## License
+## 🧪 Testing
 
-This project is licensed under the MIT License.
+### API Testing
+```bash
+# Test BGMI player search
+./test-bgmi-api.js
+
+# Run comprehensive API tests
+./retest-bgmi-api.sh
+```
+
+### Test Reports
+- [BGMI API Test Report](BGMI_API_TEST_REPORT.md)
+- [SEA Player Test Report](SEA_PLAYER_TEST_REPORT.md)
+- [Final Retest Report](FINAL_RETEST_REPORT.md)
+
+## 📚 Documentation
+
+- [BGMI API Integration Guide](BGMI_API_INTEGRATION.md)
+- [Docker Deployment Guide](DOCKER_DEPLOYMENT_SUMMARY.md)
+- [Docker Quick Start](DOCKER_QUICKSTART.md)
+- [GitHub Actions Setup](GITHUB_ACTIONS_SETUP.md)
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 🐛 Known Issues
+
+- PUBG API only supports PC platform players (mobile players cannot be searched)
+- WebSocket connections may need reconnection handling in production environments
+
+## 🚧 Roadmap
+
+- [ ] Support for more games (Valorant, CODM, Free Fire)
+- [ ] Mobile application (React Native)
+- [ ] Advanced tournament bracket visualization
+- [ ] In-app streaming capabilities
+- [ ] AI-based team matching
+- [ ] Payment integration for prize pools
+- [ ] Discord bot integration
+- [ ] Advanced analytics dashboard
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- PUBG API for providing player statistics
+- Spring Boot community for excellent documentation
+- React community for amazing UI libraries
+- All contributors and testers
+
+## 📞 Contact
+
+**Dhruv Singhal** - [@dhruv2196](https://github.com/dhruv2196)
+
+Project Link: [https://github.com/dhruv2196/esports-nexus](https://github.com/dhruv2196/esports-nexus)
+
+---
+
+<p align="center">Made with ❤️ for the gaming community</p>
