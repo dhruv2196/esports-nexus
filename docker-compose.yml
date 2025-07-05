@@ -1,0 +1,61 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: esports-nexus-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: esportsNexusAdmin2024
+      MONGO_INITDB_DATABASE: esports_nexus
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - esports-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: esports-nexus-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:esportsNexusAdmin2024@mongodb:27017/esports_nexus?authSource=admin
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: ${JWT_SECRET:-esportsNexusSecretKey2024VeryLongAndSecureKeyThatIsAtLeast512BitsLongForHS512AlgorithmRequirementThisNeedsToBeReallyLongToMeetTheRequirement}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-your_google_client_id}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-your_google_client_secret}
+      DISCORD_CLIENT_ID: ${DISCORD_CLIENT_ID:-your_discord_client_id}
+      DISCORD_CLIENT_SECRET: ${DISCORD_CLIENT_SECRET:-your_discord_client_secret}
+      PUBG_API_KEY: ${PUBG_API_KEY:-your_pubg_api_key_here}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - esports-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: /api
+    container_name: esports-nexus-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - esports-network
+
+networks:
+  esports-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local

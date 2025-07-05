@@ -1,0 +1,23 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: esports-nexus-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: esportsNexusAdmin2024
+      MONGO_INITDB_DATABASE: esports_nexus
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - esports-network
+
+networks:
+  esports-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local
