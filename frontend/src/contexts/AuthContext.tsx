@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      authService.validateToken(token)
+      authService.getCurrentUser()
         .then(userData => {
           setUser(userData);
         })
@@ -51,15 +51,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (usernameOrEmail: string, password: string) => {
     try {
       const response = await authService.login(usernameOrEmail, password);
-      localStorage.setItem('token', response.accessToken);
-      setUser({
-        id: response.userId,
-        username: response.username,
-        email: response.email,
-      });
-      toast.success('Login successful!');
+      if (response.success && response.data) {
+        // Token is already set in authService
+        setUser(response.data.user);
+        toast.success('Login successful!');
+      } else {
+        throw new Error(response.message || 'Login failed');
+      }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Login failed');
+      toast.error(error.response?.data?.message || error.message || 'Login failed');
       throw error;
     }
   };
@@ -67,15 +67,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (username: string, email: string, password: string, displayName: string) => {
     try {
       const response = await authService.register(username, email, password, displayName);
-      localStorage.setItem('token', response.accessToken);
-      setUser({
-        id: response.userId,
-        username: response.username,
-        email: response.email,
-      });
-      toast.success('Registration successful!');
+      if (response.success && response.data) {
+        // Token is already set in authService
+        setUser(response.data.user);
+        toast.success('Registration successful!');
+      } else {
+        throw new Error(response.message || 'Registration failed');
+      }
     } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Registration failed');
+      toast.error(error.response?.data?.message || error.message || 'Registration failed');
       throw error;
     }
   };

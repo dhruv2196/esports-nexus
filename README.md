@@ -14,29 +14,51 @@ A visually stunning, feature-rich esports gaming platform where gamers can track
 
 ## 🌟 Key Features
 
-### 🎯 BGMI/PUBG Integration
-- **Player Search**: Search for PUBG PC players across different regions
-- **Statistics Tracking**: View detailed player statistics and match history
-- **Malformed JSON Fix**: Robust error handling for PUBG API response issues
-- **Caching**: Efficient caching mechanism to reduce API calls
+### 🎯 Gaming Integration
+- **BGMI/PUBG PC Integration**: Real-time player stats, match history, and rankings
+- **Multi-Region Support**: Search players across NA, EU, AS, SEA, OC, SA regions
+- **Comprehensive Statistics**: K/D ratio, win rate, damage stats, and performance tracking
+- **Smart Caching**: Efficient data caching to minimize API calls
 
 ### 🔐 Authentication & Security
-- JWT-based authentication system
-- Social login support (Google, Discord)
-- Secure password hashing with BCrypt
-- Role-based access control
+- **Multiple Auth Methods**: Email/password, Google OAuth, Discord (planned)
+- **JWT Security**: Secure token-based authentication
+- **BCrypt Encryption**: Industry-standard password hashing
+- **Role-Based Access**: Player, Team Captain, Tournament Organizer, Admin roles
 
-### 🏆 Tournament Management
-- Create and manage tournaments
-- Real-time tournament updates via WebSocket
-- Player registration and bracket management
-- Prize pool tracking
+### 🏆 Tournament System
+- **Flexible Formats**: Single/Double elimination, Round robin, Swiss system
+- **Live Updates**: Real-time bracket updates via WebSocket
+- **Prize Management**: Secure prize pool tracking and distribution
+- **Team Registration**: Easy team formation and management
+
+### 💳 Payment & Subscriptions
+- **Stripe Integration**: Secure payment processing
+- **Subscription Tiers**: Free, Pro ($9.99/mo), Team ($29.99/mo)
+- **Prize Pool Escrow**: Automated prize distribution
+- **Multiple Payment Methods**: Cards, PayPal, Crypto (planned)
+
+### 🤖 AI & Analytics
+- **Performance Insights**: AI-powered gameplay analysis
+- **Team Matching**: Intelligent team recommendations
+- **Predictive Analytics**: Match outcome predictions
+- **Training Suggestions**: Personalized improvement tips
 
 ### 💻 Modern Tech Stack
-- **Backend**: Spring Boot 3.1.5, MongoDB, WebSocket
+- **Microservices**: Node.js, Go, Python services
 - **Frontend**: React 18, TypeScript, Framer Motion
-- **DevOps**: Docker, Kubernetes, GitHub Actions
-- **UI/UX**: Glassmorphism effects, Neon-themed dark UI
+- **Mobile**: React Native (iOS & Android)
+- **Infrastructure**: Docker, Kubernetes, NGINX
+- **Databases**: PostgreSQL, MongoDB, Redis
+- **UI/UX**: Glassmorphism, Neon theme, Dark mode
+
+### 📱 Cross-Platform
+- **Responsive Web App**: Works on all devices
+- **Native Mobile Apps**: iOS and Android support
+- **Real-time Sync**: Data syncs across all platforms
+- **Offline Mode**: Access key features without internet
+
+**[View Complete Features List →](FEATURES.md)**
 
 ## 🚀 Quick Start
 
@@ -47,18 +69,22 @@ A visually stunning, feature-rich esports gaming platform where gamers can track
 git clone https://github.com/dhruv2196/esports-nexus.git
 cd esports-nexus
 
-# Copy and configure environment variables
-cp .env.example .env
-# Edit .env with your configuration
+# Quick start (checks prerequisites and starts all services)
+./start.sh
 
-# Start all services
-./deploy.sh development up
+# Or manually start all microservices
+docker-compose -f docker-compose.microservices.yml up -d
 
 # Check service health
-./health-check.sh
+docker-compose -f docker-compose.microservices.yml ps
+
+# Stop all services
+./stop.sh
 ```
 
 Access the application at: http://localhost
+
+**📖 For detailed setup instructions including mobile app setup, see the [Complete Running Guide](RUNNING_GUIDE.md)**
 
 ### Manual Setup
 
@@ -79,32 +105,46 @@ npm install
 npm start
 ```
 
+#### Mobile App Setup
+See the [Complete Running Guide](RUNNING_GUIDE.md) for detailed mobile app instructions.
+
 </details>
 
 ## 🏗️ Architecture
 
+### Microservices Architecture
+
 ```
 esports-nexus/
-├── backend/                 # Spring Boot REST API
-│   ├── src/
-│   │   └── main/
-│   │       └── java/com/esportsnexus/
-│   │           ├── config/      # Security, WebSocket, Cache configs
-│   │           ├── controller/  # REST endpoints
-│   │           ├── service/     # Business logic & PUBG API integration
-│   │           └── model/       # MongoDB entities
-│   └── Dockerfile
+├── backend/                 # Legacy Spring Boot monolith (being migrated)
 ├── frontend/                # React TypeScript SPA
-│   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   ├── pages/          # Route pages
-│   │   ├── services/       # API client services
-│   │   └── contexts/       # React contexts (Auth)
-│   └── Dockerfile
+├── mobile/                  # React Native mobile app
+├── services/                # Microservices
+│   ├── user-service/        # Node.js - Authentication & user management
+│   ├── tournament-service/  # Go - Tournament creation & management
+│   ├── game-integration/    # Python - Game API integrations (PUBG, Riot)
+│   ├── ai-service/          # Python - Analytics & predictions
+│   └── payment-service/     # Node.js - Stripe payment processing
+├── infrastructure/          # Docker & deployment configs
+│   └── nginx/              # API Gateway configuration
 ├── k8s/                    # Kubernetes manifests
-├── docker-compose.yml      # Development environment
-└── docker-compose.prod.yml # Production environment
+└── docker-compose.microservices.yml # Microservices environment
 ```
+
+### Service Ports
+
+| Service | Port | Technology |
+|---------|------|------------|
+| Frontend | 80 | React |
+| API Gateway | 8000 | NGINX |
+| User Service | 3000 | Node.js |
+| Tournament Service | 8081 | Go |
+| Game Integration | 5000 | Python |
+| AI Service | 5001 | Python |
+| Payment Service | 8083 | Node.js |
+| PostgreSQL | 5432 | - |
+| MongoDB | 27017 | - |
+| Redis | 6379 | - |
 
 ## 🔧 Configuration
 
@@ -183,6 +223,9 @@ kubectl get all -n esports-nexus
 
 ## 📚 Documentation
 
+- [Quick Features Reference](QUICK_FEATURES_REFERENCE.md) - **Quick overview of features by user type**
+- [Complete Features List](FEATURES.md) - **Comprehensive list of all platform features**
+- [Complete Running Guide](RUNNING_GUIDE.md) - **Start here!** Comprehensive setup for web and mobile
 - [BGMI API Integration Guide](BGMI_API_INTEGRATION.md)
 - [Docker Deployment Guide](DOCKER_DEPLOYMENT_SUMMARY.md)
 - [Docker Quick Start](DOCKER_QUICKSTART.md)
@@ -205,14 +248,32 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 
 ## 🚧 Roadmap
 
-- [ ] Support for more games (Valorant, CODM, Free Fire)
-- [ ] Mobile application (React Native)
+### ✅ Completed
+- [x] BGMI/PUBG PC integration with stats tracking
+- [x] JWT authentication with social login
+- [x] Tournament creation and management
+- [x] Microservices architecture migration
+- [x] Payment integration (Stripe)
+- [x] AI service for analytics
+- [x] Mobile app foundation (React Native)
+- [x] Real-time WebSocket updates
+- [x] Advanced UI with glassmorphism
+
+### 🔄 In Progress
+- [ ] Mobile app completion and deployment
 - [ ] Advanced tournament bracket visualization
+- [ ] Discord OAuth integration
+- [ ] Team voice chat integration
+
+### 📅 Planned (2025)
+- [ ] Support for more games (Valorant, CODM, Free Fire)
 - [ ] In-app streaming capabilities
-- [ ] AI-based team matching
-- [ ] Payment integration for prize pools
-- [ ] Discord bot integration
-- [ ] Advanced analytics dashboard
+- [ ] Discord bot for notifications
+- [ ] VR tournament viewing
+- [ ] Blockchain prize distribution
+- [ ] NFT player cards
+- [ ] Esports betting (where legal)
+- [ ] AI-powered coaching system
 
 ## 📄 License
 

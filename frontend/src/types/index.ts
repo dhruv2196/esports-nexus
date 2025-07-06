@@ -98,9 +98,10 @@ export interface LiveMatch {
 }
 
 export interface AuthResponse {
-  accessToken: string;
-  tokenType: string;
-  userId: string;
-  username: string;
-  email: string;
+  success: boolean;
+  message: string;
+  data: {
+    token: string;
+    user: User;
+  } | null;
 }

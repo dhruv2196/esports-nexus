@@ -29,6 +29,7 @@ const Navbar: React.FC = () => {
     { path: '/tournaments', label: 'Tournaments', icon: FaTrophy },
     { path: '/live', label: 'Live', icon: MdLiveTv },
     { path: '/teams', label: 'Teams', icon: FaUsers },
+    { path: '/players', label: 'Players', icon: FaUser },
     { path: '/stats', label: 'Stats', icon: FaChartBar },
   ];
 
@@ -75,6 +76,20 @@ const Navbar: React.FC = () => {
                 transition={{ delay: 0.5 }}
               >
                 <Link
+                  to="/dashboard"
+                  className="navbar-link"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="navbar-icon">{React.createElement(FaChartBar as any)}</span>
+                  <span>Dashboard</span>
+                </Link>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+              >
+                <Link
                   to="/profile"
                   className="navbar-link"
                   onClick={() => setMobileMenuOpen(false)}
@@ -88,7 +103,7 @@ const Navbar: React.FC = () => {
                 onClick={handleLogout}
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.7 }}
               >
                 Logout
               </motion.button>

@@ -1,12 +1,12 @@
 import axios from 'axios';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+import { API_GATEWAY_URL } from '../config/api.config';
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_GATEWAY_URL,
   headers: {
     'Content-Type': 'application/json',
   },
+  // withCredentials not needed since we're using JWT in Authorization header
 });
 
 // Request interceptor to add auth token

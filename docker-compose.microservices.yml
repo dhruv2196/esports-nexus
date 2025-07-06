@@ -1,0 +1,247 @@
+services:
+  # PostgreSQL for User, Tournament, and Team services
+  postgres:
+    image: postgres:15-alpine
+    container_name: esports-nexus-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_MULTIPLE_DATABASES: "esports_nexus_users,esports_nexus_tournaments,esports_nexus_teams,esports_nexus_games,esports_nexus_analytics,esports_nexus_payments"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-postgres.sh:/docker-entrypoint-initdb.d/init-postgres.sh
+    networks:
+      - esports-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB for legacy data (will be migrated)
+  mongodb:
+    image: mongo:6.0
+    container_name: esports-nexus-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: esportsNexusAdmin2024
+      MONGO_INITDB_DATABASE: esports_nexus
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - esports-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    container_name: esports-nexus-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - esports-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # User Service
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile
+      target: development
+    container_name: esports-nexus-user-service
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: esports_nexus_users
+      JWT_SECRET: esportsNexusSecretKey2024VeryLongAndSecureKeyThatIsAtLeast512BitsLongForHS512AlgorithmRequirementThisNeedsToBeReallyLongToMeetTheRequirement
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - esports-network
+    volumes:
+      - ./services/user-service/src:/app/src
+      - ./services/user-service/tsconfig.json:/app/tsconfig.json
+
+  # Tournament Service
+  tournament-service:
+    build:
+      context: ./services/tournament-service
+      dockerfile: Dockerfile
+    container_name: esports-nexus-tournament-service
+    environment:
+      PORT: 8080
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: esports_nexus_tournaments
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - esports-network
+
+  # Game Integration Service
+  game-integration-service:
+    build:
+      context: ./services/game-integration-service
+      dockerfile: Dockerfile
+    container_name: esports-nexus-game-integration-service
+    environment:
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: esports_nexus_games
+      REDIS_URL: redis://redis:6379
+      RIOT_API_KEY: ${RIOT_API_KEY:-}
+      PUBG_API_KEY: ${PUBG_API_KEY:-}
+    ports:
+      - "5000:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - esports-network
+
+  # AI Service
+  ai-service:
+    build:
+      context: ./services/ai-service
+      dockerfile: Dockerfile
+    container_name: esports-nexus-ai-service
+    environment:
+      PORT: 5001
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: esports_nexus_analytics
+      REDIS_URL: redis://redis:6379
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      S3_BUCKET: esports-nexus-models
+    ports:
+      - "5001:5001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - esports-network
+
+  # Payment Service
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile
+    container_name: esports-nexus-payment-service
+    environment:
+      NODE_ENV: development
+      PORT: 8083
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: esports_nexus_payments
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: esportsNexusSecretKey2024VeryLongAndSecureKeyThatIsAtLeast512BitsLongForHS512AlgorithmRequirementThisNeedsToBeReallyLongToMeetTheRequirement
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_your_stripe_secret_key}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_your_webhook_secret}
+      USER_SERVICE_URL: http://user-service:3000
+      TOURNAMENT_SERVICE_URL: http://tournament-service:8080
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - esports-network
+
+  # API Gateway (NGINX)
+  api-gateway:
+    image: nginx:alpine
+    container_name: esports-nexus-api-gateway
+    ports:
+      - "8000:80"
+    volumes:
+      - ./infrastructure/nginx/api-gateway.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - user-service
+      - tournament-service
+      - game-integration-service
+      - ai-service
+      - payment-service
+    networks:
+      - esports-network
+
+  # Legacy Backend (will be decomposed)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: esports-nexus-backend
+    restart: unless-stopped
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://admin:esportsNexusAdmin2024@mongodb:27017/esports_nexus?authSource=admin
+      SPRING_PROFILES_ACTIVE: docker
+      JWT_SECRET: esportsNexusSecretKey2024VeryLongAndSecureKeyThatIsAtLeast512BitsLongForHS512AlgorithmRequirementThisNeedsToBeReallyLongToMeetTheRequirement
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    networks:
+      - esports-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_URL: http://localhost:8000/api/v1
+    container_name: esports-nexus-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - esports-network
+
+networks:
+  esports-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
